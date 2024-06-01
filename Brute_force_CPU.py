@@ -4,10 +4,10 @@ import os
 import multiprocessing
 import string
 
-def crack_password(password, chars=string.ascii_lowercase + string.digits):
+def crack_password(password, chars=string.ascii_letters + string.digits + "@$!"):
     start_time = time.time()
     combinations_tried = 0
-    max_length = 10  # Maximum password length to attempt
+    max_length = 15 # Maximum password length to attempt
     for length in range(1, max_length + 1):
         for attempt in itertools.product(chars, repeat=length):
             combinations_tried += 1
@@ -20,8 +20,9 @@ def main():
     password = input("Enter the password to crack: ")
     
     # Split the character set into chunks to be processed by multiple cores
-    chunk_size = len(string.ascii_lowercase + string.digits) // 10
-    chunks = [string.ascii_lowercase + string.digits[i:i + chunk_size] for i in range(0, len(string.ascii_lowercase + string.digits), chunk_size)]
+    chars = string.ascii_letters + string.digits + "@$!"
+    chunk_size = len(chars) // 10
+    chunks = [chars[i:i + chunk_size] for i in range(0, len(chars), chunk_size)]
     
     pool = multiprocessing.Pool(processes=8)
     results = [pool.apply_async(crack_password, (password, chunk)) for chunk in chunks]
